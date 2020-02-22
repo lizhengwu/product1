@@ -27,13 +27,13 @@ public class InstanceController {
 		return new LinkedHashSet<>(discoveryClient.getServices());
 	}
 
-	@GetMapping("services/${serviceId}")
+	@GetMapping("services/{serviceId}")
 	public List<ServiceInstance> getInstance(@PathVariable String serviceId) {
 
 		return discoveryClient.getInstances(serviceId);
 	}
 
-	@GetMapping("services/${serviceId}/${}")
+	@GetMapping("services/{serviceId}/{instanceId}")
 	public ServiceInstance getInstance(@PathVariable String serviceId, @PathVariable String instanceId) {
 		ServiceInstance result = discoveryClient.getInstances(serviceId).stream().
 				filter(serviceInstance -> serviceInstance.getInstanceId().equals(instanceId)).findFirst().get();

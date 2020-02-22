@@ -3,13 +3,23 @@ spring:
     name: eureka-client1
 
 server:
-  port: 8081
+  port: 9091
 
 
+  #eureka:
+  #  server:
+  #    ip : localhost
+  #    port : 9080
+  #  client:
+  #    service-url:
+  #      defaultZone : http://${eureka.server.ip}:${eureka.server.port}/eureka
+
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181
+      enabled: true
 eureka:
-  server:
-    ip : localhost
-    port : 9080
   client:
-    service-url:
-      defaultZone : http://${eureka.server.ip}:${eureka.server.port}/eureka
+    enabled: false
+
+
