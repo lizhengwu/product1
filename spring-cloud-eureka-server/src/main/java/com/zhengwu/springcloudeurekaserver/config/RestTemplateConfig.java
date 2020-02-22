@@ -1,7 +1,6 @@
 package com.zhengwu.springcloudeurekaserver.config;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancedRetryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -13,7 +12,7 @@ public class RestTemplateConfig {
 
 
 	@Bean
-	@LoadBalanced
+	// @LoadBalanced
 	public RestTemplate restTemplate(){
 		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		// httpComponentsClientHttpRequestFactory.setConnectTimeout();
