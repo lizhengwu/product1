@@ -17,7 +17,7 @@ import org.springframework.util.MultiValueMap;
 import com.lzw.annotation.OnSystemPropertyConditon;
 
 /**
- * 〈〉
+ * 〈 根据 SystemProperties 判断是否加载某个实例〉
  *
  * @author lzw
  * @create 2020/2/20

@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import com.lzw.annotation.OnSystemPropertyConditon;
 
 /**
- * 〈〉
+ * 〈条件注解〉
  *
  * @author lzw
  * @create 2020/2/20

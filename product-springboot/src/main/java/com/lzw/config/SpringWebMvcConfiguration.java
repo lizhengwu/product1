@@ -18,8 +18,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @create 2020/2/20
  * @since 1.0.0
  */
-@EnableWebMvc
 @Configuration
+@EnableWebMvc
 public class SpringWebMvcConfiguration implements WebMvcConfigurer {
 
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lzw.dao.MasterLogbackConfigMapper">
+    <resultMap id="BaseResultMap" type="com.lzw.monitor.model.LogbackConfig">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="directoryName" property="directoryname" jdbcType="VARCHAR"/>
+        <result column="environment" property="environment" jdbcType="VARCHAR"/>
+        <result column="enable" property="enable" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from logback_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.lzw.monitor.model.LogbackConfig">
+    insert into logback_config (id, directoryName, environment, 
+      enable, create_time)
+    values (#{id,jdbcType=INTEGER}, #{directoryname,jdbcType=VARCHAR}, #{environment,jdbcType=VARCHAR}, 
+      #{enable,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.lzw.monitor.model.LogbackConfig">
+    update logback_config
+    set directoryName = #{directoryname,jdbcType=VARCHAR},
+      environment = #{environment,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select id, directoryName, environment, enable, create_time
+    from logback_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, directoryName, environment, enable, create_time
+    from logback_config
+  </select>
+</mapper>

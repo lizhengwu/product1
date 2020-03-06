@@ -1,13 +1,15 @@
 /**
- * FileName: DevEnvironmentImpl
+ * FileName: ProEnvironmentImpl
  * Author:   lzw
- * Date:     2020/2/18 22:27
+ * Date:     2020/2/18 22:28
  * Description:
  * History:
  */
-package com.lzw.service;
+package com.lzw.service.impl;
 
 import org.springframework.stereotype.Component;
+
+import com.lzw.service.Environment;
 
 /**
  * 〈〉
@@ -16,11 +18,12 @@ import org.springframework.stereotype.Component;
  * @create 2020/2/18
  * @since 1.0.0
  */
+
 @Component
-public class DevEnvironmentImpl implements Environment {
+public class ProEnvironmentImpl implements Environment {
 
 	@Override
 	public String getEnvirment() {
-		return "测试环境";
+		return "生产环境";
 	}
 }

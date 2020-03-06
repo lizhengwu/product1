@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzw.dao.MasterLogbackRecordMapper">
+    <resultMap id="BaseResultMap" type="com.lzw.monitor.model.LogbackRecord">
+        <id column="id" jdbcType="CHAR" property="id"/>
+        <result column="access_jnl_id" jdbcType="CHAR" property="accessJnlId"/>
+        <result column="method_name" jdbcType="VARCHAR" property="methodName"/>
+        <result column="service_type" jdbcType="VARCHAR" property="serviceType"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="duration" jdbcType="INTEGER" property="duration"/>
+        <result column="server" jdbcType="VARCHAR" property="server"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from logback_record
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+    <insert id="insert" parameterType="com.lzw.monitor.model.LogbackRecord">
+    insert into logback_record (id, access_jnl_id, method_name, 
+      service_type, start_time, end_time, 
+      duration, server)
+    values (#{id,jdbcType=CHAR}, #{accessJnlId,jdbcType=CHAR}, #{methodName,jdbcType=VARCHAR}, 
+      #{serviceType,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{duration,jdbcType=INTEGER}, #{server,jdbcType=VARCHAR})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.lzw.monitor.model.LogbackRecord">
+    update logback_record
+    set access_jnl_id = #{accessJnlId,jdbcType=CHAR},
+      method_name = #{methodName,jdbcType=VARCHAR},
+      service_type = #{serviceType,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      duration = #{duration,jdbcType=INTEGER},
+      server = #{server,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, access_jnl_id, method_name, service_type, start_time, end_time, duration, 
+    server
+    from logback_record
+    where id = #{id,jdbcType=CHAR}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, access_jnl_id, method_name, service_type, start_time, end_time, duration, 
+    server
+    from logback_record
+  </select>
+    <update id="updateEndTime" parameterType="com.lzw.monitor.model.LogbackRecord">
+        update logback_record r
+        set r.end_time = #{endTime,jdbcType=TIMESTAMP}, r.duration
+        =TIMESTAMPDIFF(MICROSECOND,r.start_time,#{endTime,jdbcType=TIMESTAMP})/1000
+        where r.access_jnl_id = #{accessJnlId,jdbcType=CHAR} and r.method_name = #{methodName,jdbcType=VARCHAR} and
+        r.service_type=#{serviceType,jdbcType=INTEGER} and r.end_time is null;
+    </update>
+    <insert id="insertRecord" parameterType="com.lzw.monitor.model.LogbackRecord">
+    insert into logback_record (id, access_jnl_id, method_name,
+    service_type, start_time, end_time,
+    duration, server)
+    values (#{id,jdbcType=CHAR}, #{accessJnlId,jdbcType=CHAR}, #{methodName,jdbcType=VARCHAR},
+      #{serviceType,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
+      #{duration,jdbcType=INTEGER}, #{server,jdbcType=VARCHAR})
+
+   </insert>
+</mapper>
