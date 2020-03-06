@@ -12,13 +12,15 @@ import com.lzw.config.EnvironmentImportBeanDefinitionRegistrar;
 import com.lzw.config.EnvironmentImportSelector;
 import com.lzw.service.Environment;
 
+/**
+ * 环境枚举，Enable模块来决定
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 // @Import(EnvironmentImportSelector.class)
 @Import(EnvironmentImportBeanDefinitionRegistrar.class)
-public @interface EnableEnvirmont {
-
+public @interface EnableEnvironment {
 
 	Environment.Type type();
 

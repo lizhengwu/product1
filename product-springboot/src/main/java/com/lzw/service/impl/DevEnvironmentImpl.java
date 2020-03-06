@@ -22,7 +22,7 @@ import com.lzw.service.Environment;
 public class DevEnvironmentImpl implements Environment {
 
 	@Override
-	public String getEnvirment() {
+	public String getEnvironment() {
 		return "测试环境";
 	}
 }

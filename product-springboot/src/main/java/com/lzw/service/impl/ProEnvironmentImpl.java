@@ -23,7 +23,7 @@ import com.lzw.service.Environment;
 public class ProEnvironmentImpl implements Environment {
 
 	@Override
-	public String getEnvirment() {
+	public String getEnvironment() {
 		return "生产环境";
 	}
 }

@@ -10,8 +10,7 @@ package com.lzw;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
-import com.lzw.annotation.EnableEnvirmont;
-import com.lzw.annotation.EnableHelloWord;
+import com.lzw.annotation.EnableEnvironment;
 import com.lzw.service.Environment;
 
 /**
@@ -22,7 +21,7 @@ import com.lzw.service.Environment;
  * @since 1.0.0
  */
 @Configuration
-@EnableEnvirmont(type = Environment.Type.PRO)
+@EnableEnvironment(type = Environment.Type.PRO)
 public class EnableEnvironmentSelectorBootStrap {
 
 	public static void main(String[] args) {
@@ -34,7 +33,7 @@ public class EnableEnvironmentSelectorBootStrap {
 		annotationConfigApplicationContext.refresh();
 
 		Environment environment = annotationConfigApplicationContext.getBean(Environment.class);
-		System.out.println(environment.getEnvirment());
+		System.out.println(environment.getEnvironment());
 
 		annotationConfigApplicationContext.close();
 	}

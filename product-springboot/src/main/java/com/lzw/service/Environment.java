@@ -16,7 +16,7 @@ package com.lzw.service;
  */
 public interface Environment {
 
-	String getEnvirment();
+	String getEnvironment();
 
 	enum Type{
 		DEV,
