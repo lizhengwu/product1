@@ -27,16 +27,16 @@ import com.lzw.monitor.model.LogbackConfig;
 @RestController
 public class FirstController {
 
-	@Autowired
-	private LogbackConfigMapper logbackConfigMapper;
+	// @Autowired
+	// private LogbackConfigMapper logbackConfigMapper;
 
 	@Autowired
 	private MasterLogbackConfigMapper masterLogbackConfigMapper;
 
-	@GetMapping("/config")
-	public List<LogbackConfig> helloWordByController() {
-		return logbackConfigMapper.selectAll();
-	}
+	// @GetMapping("/config")
+	// public List<LogbackConfig> helloWordByController() {
+	// 	return logbackConfigMapper.selectAll();
+	// }
 
 	@GetMapping("/masterConfig")
 	public List<LogbackConfig> masterConfig() {

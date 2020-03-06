@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
- * 〈〉
+ * 〈选择条件注入处理器〉
  *
  * @author lzw
  * @create 2020/2/18

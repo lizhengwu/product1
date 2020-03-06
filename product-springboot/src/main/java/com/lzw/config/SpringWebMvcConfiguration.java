@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * 〈〉
+ * 〈spring MVC注解配置类〉
  *
  * @author lzw
  * @create 2020/2/20
