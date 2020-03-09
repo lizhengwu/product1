@@ -88,28 +88,295 @@ Docker
 
 
 ### ArrayList
+**Features**
+
+- ArrayList 是一个动态的可变的数组，其内部主要是由一个 Object[] 数组来存储数据，实现了List ，RandomAccess，Serializable
+- ArrayList 初始化大小是10，最大可以存放INTEGER.MAXVALUE个元素，但是这个时候要考虑方法栈的大小。
+- ArrayList 序列化的时候是遍历没一个元素进行序列化。`writeObject`
+- ArrayList 新增的时候，每次在数组满了之后才会新增数组，增加的是现有的一半（1.5倍扩容），并且是直接Copy过去
+- 删除元素，直接把后面的元素整体复制到前面。
+- fail-fast modCounr 用来记录ArrayListde 改变次数，所以，在迭代器迭代的时候如果count，发生改变了，则会抛出exception。这就是为啥不能再for循环的时候删除元素，只能在迭代器里面进行删除
+
+**Question**
 
 最大有多少个元素，是否能存那么多个，要考虑内存够不够，一个栈的内存能放多少。
-
-新增，删除，初始化。
-
-Modcount 
 
 
 
 ### Vector
 
-和ArrayList差不多，但是有替代版本，juc包里面有替代版本
+**Features**
+
+- 线程安全版本的ArrayList，内部方法基本上都差不多。
+- 每次扩容成倍的扩容
+
+Vector如果单纯是为了线程安全考虑的话，是可以有替代方案的
+
+```java
+ Collections.synchronizedCollection(new ArrayList<>());
+```
+
+```java
+CopyOnWriteArrayList copyOnWriteArrayList = new CopyOnWriteArrayList();
+```
+
+CopyOnWriteArrayList 新增的时候每次都会copy原来的数组，在读的时候不会锁，只加了个写锁，在高并发情况下读多写少的情况下可以用这个，但是无法避免脏读现象
 
 ### LinkedList 
 
-双向链表，增加删除，比较快，但是不支持随机访问，必须递归获取。
+数据结构
 
-二分法查找  size>>1 
+```java
+/**
+     * Pointer to first node.
+     * Invariant: (first == null && last == null) ||
+     *            (first.prev == null && first.item != null)
+     */
+transient Node<E> first;
+
+    /**
+     * Pointer to last node.
+     * Invariant: (first == null && last == null) ||
+     *            (last.next == null && last.item != null)
+     */
+transient Node<E> last;
+
+private static class Node<E> {
+    E item;
+    Node<E> next;
+    Node<E> prev;
+
+    Node(Node<E> prev, E element, Node<E> next) {
+        this.item = element;
+        this.next = next;
+        this.prev = prev;
+    }
+}
+```
+
+
+
+**Features**
+
+- LinkedList是一个双向的链表，存储了头指针和 尾指针。这两个Node就是两个链表。
+- 序列化的时候和ArrayList一样，遍历每一个元素
+- 不支持随机查找，只能挨个遍历，新增和删除很快，但是查找却很慢。是因为查找的时候只能从前遍历或者从后遍历。
 
 
 
 ### HashMap
+
+**Features**
+
+- 初始化大小是16，新增因子是0.75 
+- HashMap的第一层是`Node<K,V>[] table`，key存放的是hash ，Node存放的是数据，可以是个object ，单向链表，树。在他的单个node的size大于 等于8时，为了查询效率转化为红黑树，当转的时候，如果发现Hashtale的size小于64的话，会选择直接扩容HashTable，而不去转红黑树。
+- HashMap在扩容的时候，oldTab.length << 1 ,然后再拿所有的hash重新按照size计算一下。放入新的tab中
+
+
+
+**源码分析**
+
+put分析
+
+```java
+/**
+ * Implements Map.put and related methods
+ *
+ * @param hash hash for key
+ * @param key the key
+ * @param value the value to put
+ * @param onlyIfAbsent if true, don't change existing value
+ * @param evict if false, the table is in creation mode.
+ * @return previous value, or null if none
+ */
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+               boolean evict) {
+    Node<K,V>[] tab; Node<K,V> p; int n, i;
+    //如果table不存在，新增table
+    if ((tab = table) == null || (n = tab.length) == 0)
+        n = (tab = resize()).length;
+    // 用hash与table大小进行计算，看看是否能得到table的数组的下标的链表，没有的话新增node，在这里n是hashMap的大小，就是为了让n与hash参与运算，hash的值也会与自己的高16位参与一个异或运算，为了保证一个散列程度
+    if ((p = tab[i = (n - 1) & hash]) == null)
+        tab[i] = newNode(hash, key, value, null);
+    else {
+        //如果拿到了Node
+        Node<K,V> e; K k;
+        // 如果发现Node的key相等，那么就覆盖
+        if (p.hash == hash &&
+            ((k = p.key) == key || (key != null && key.equals(k))))
+            e = p;
+        // 如果不相等，看看这个key是否已经变为树
+        else if (p instanceof TreeNode)
+            e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+        // 不是树就是单向的链表，头部开头的链表
+        else {
+            for (int binCount = 0; ; ++binCount) {
+                if ((e = p.next) == null) {
+                    p.next = newNode(hash, key, value, null);
+                    // 这里判断要不要转为树
+                    if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        treeifyBin(tab, hash);
+                    break;
+                }
+                // 赋值给当前节点
+                if (e.hash == hash &&
+                    ((k = e.key) == key || (key != null && key.equals(k))))
+                    break;
+                p = e;
+            }
+        }
+        if (e != null) { // existing mapping for key
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null)
+                e.value = value;
+            //linkedHashMap所拥有的特性
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }
+    ++modCount;
+    if (++size > threshold)
+        resize();
+    //linkedHashMap所拥有的特性
+    afterNodeInsertion(evict);
+    return null;
+}
+```
+
+
+
+resize 重新扩容
+
+```java
+/**
+ * Initializes or doubles table size.  If null, allocates in
+ * accord with initial capacity target held in field threshold.
+ * Otherwise, because we are using power-of-two expansion, the
+ * elements from each bin must either stay at same index, or move
+ * with a power of two offset in the new table.
+ *
+ * @return the table
+ */
+final Node<K,V>[] resize() {
+    Node<K,V>[] oldTab = table;
+    int oldCap = (oldTab == null) ? 0 : oldTab.length;
+    int oldThr = threshold;
+    int newCap, newThr = 0;
+    if (oldCap > 0) {
+        if (oldCap >= MAXIMUM_CAPACITY) {
+            threshold = Integer.MAX_VALUE;
+            return oldTab;
+        }
+        else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
+                 oldCap >= DEFAULT_INITIAL_CAPACITY)
+            newThr = oldThr << 1; // double threshold
+    }
+    else if (oldThr > 0) // initial capacity was placed in threshold
+        newCap = oldThr;
+    else {               // zero initial threshold signifies using defaults
+        newCap = DEFAULT_INITIAL_CAPACITY;
+        newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+    }
+    if (newThr == 0) {
+        float ft = (float)newCap * loadFactor;
+        newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
+                  (int)ft : Integer.MAX_VALUE);
+    }
+    threshold = newThr;
+    @SuppressWarnings({"rawtypes","unchecked"})
+        Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+    table = newTab;
+    if (oldTab != null) {
+        for (int j = 0; j < oldCap; ++j) {
+            Node<K,V> e;
+            if ((e = oldTab[j]) != null) {
+                oldTab[j] = null;
+                if (e.next == null)
+                    newTab[e.hash & (newCap - 1)] = e;
+                else if (e instanceof TreeNode)
+                    ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
+                else { // preserve order
+                    Node<K,V> loHead = null, loTail = null;
+                    Node<K,V> hiHead = null, hiTail = null;
+                    Node<K,V> next;
+                    do {
+                        next = e.next;
+                        if ((e.hash & oldCap) == 0) {
+                            if (loTail == null)
+                                loHead = e;
+                            else
+                                loTail.next = e;
+                            loTail = e;
+                        }
+                        else {
+                            if (hiTail == null)
+                                hiHead = e;
+                            else
+                                hiTail.next = e;
+                            hiTail = e;
+                        }
+                    } while ((e = next) != null);
+                    if (loTail != null) {
+                        loTail.next = null;
+                        newTab[j] = loHead;
+                    }
+                    if (hiTail != null) {
+                        hiTail.next = null;
+                        newTab[j + oldCap] = hiHead;
+                    }
+                }
+            }
+        }
+    }
+    return newTab;
+}
+```
+
+
+
+### ConcurrentHashMap
+
+数据结构
+
+```java
+final int hash;
+final K key;
+volatile V val;
+volatile Node<K,V> next;
+```
+
+**Features**
+
+- 线程安全的HashMap 
+
+- 1.7 用segment 1.8 用CAS。并且在链表过长也会转红黑树
+
+  
+
+### LinkedHashMap
+
+
+
+**Features**
+
+- 插入有序的HashMap 
+- accessOrder决定维护部维护插入顺序
+
+
+
+基于LinkedHashMap 实现LRU缓存
+
+
+
+
+
+### WeakHashMap
+
+
+
+
+
+主要用来缓存实现
 
 
 
@@ -425,5 +692,13 @@ base理论是对CAP的一种妥协，无法做到强一致，就使用另一种�
 
 
 
+# 算法
+
+
+
 ## 布隆过滤器
+
+## 红黑树
+
+## LRU算法
 
