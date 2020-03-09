@@ -1,6 +1,4 @@
-# 知识点
-
-## OpenSource
+# 一、JAVA技术栈
 
 
 
@@ -62,9 +60,62 @@ Docker
 
 
 
-## HTTP2.0
-    Hypertext 超文本协议
-    HPACK 
+
+
+
+
+# 二、JAVA 基础
+
+## 2.1 位移运算 
+
+```
+<< : 左移运算符，num <<1,相当于num乘以2
+
+>> : 右移运算符，num >>1,相当于num除以2
+
+>>> : 无符号右移，忽略符号位，空位都以0补齐，（计算机中数字以补码存储，首位为符号位）。
+
+如：a  =  00110111，则a>>2    = 00001101，b=11010011，则b>>2   =  11110100；  
+
+如：a  =  00110111，则a>>>2  = 00001101，b=11010011，则b>>>2 =  00110100。
+
+```
+
+
+
+## 2.2 Collection
+
+
+
+### ArrayList
+
+最大有多少个元素，是否能存那么多个，要考虑内存够不够，一个栈的内存能放多少。
+
+新增，删除，初始化。
+
+Modcount 
+
+
+
+### Vector
+
+和ArrayList差不多，但是有替代版本，juc包里面有替代版本
+
+### LinkedList 
+
+双向链表，增加删除，比较快，但是不支持随机访问，必须递归获取。
+
+二分法查找  size>>1 
+
+
+
+### HashMap
+
+
+
+
+
+## 2.3  序列化
 
 
 
@@ -72,64 +123,35 @@ Docker
 
 
 
-## Rest协议
-一方面是 requestMethod的运用，另一方面是response 更多的根据状态码来判断。
+## 2.3 代理反射
+
+
+
+## 2.4 内存模型
+
+
+
+## 2.5 线程并发
+
+### 线程状态
+
+NEW、RUNNABLE 、BLOCK、WAIT、TIMEWAIT、TERMINATED
 
 
 
 
 
+## 2.XX Java8新特性
 
+1、接口式编程
 
-## 分布式的CAP
+2、lamada表达式
 
-CAP是加州大学伯克利分销的Eric Brewer教授提出来的。指的是在分布式系统中，三个要素最多能实现两点，不可能三者兼顾
+3、interface default
 
+4、stream处理
 
-
-(Consistency) 一致性
-
-​	在分布式系统中所有的数据备份在同一时刻是一致的。同步数据的延迟性极小
-
-(Available) 可用性 
-
-​	在分布式系统中某一单点节点宕机之后,每个响应依然可以完成
-
-(Partition tolerance) 分区容错性
-
-​	在集群中如果出现错误能够正常服务
-
-
-
-### BASE 理论
-
-Basically Avaliable (基本可用)
-
-Soft state  （软状态）
-
-Eventually consistent (最终一致性)
-
-base理论是对CAP的一种妥协，无法做到强一致，就使用另一种方法来达到最终的目的
-
-
-
-### XA协议
-
-1、2PC   to prepare commit  两阶段提交，就是XA协议的原理。牺牲一部分可用性来保证一致性。
-
-第一阶段提交就是预提交，等处理完成后接受返回，判断返回结果来决定下一个请求是commit还是abort。
-
-2、TCC   try catch cancel   执行的时候判断是否出现异常，如果失败，则调用cancel处理。
-
-3、异步补偿机制  ，写入数据的时候如果异常，需要写入一个消息，异步通过消息来对此次写入数据做补偿。
-
-
-
-[参考文章](https://www.cnblogs.com/savorboard/p/distributed-system-transaction-consistency.html)
-
-
-
-## 面向服务的架构 SOA 
+5、parallelStream ，stream 新能比较
 
 
 
@@ -139,7 +161,40 @@ base理论是对CAP的一种妥协，无法做到强一致，就使用另一种�
 
 
 
-## Cloud Native
+# 三、JAVA框架
+
+## 3.1 SpringFramework
+
+### Features
+
+- [Core technologies](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html): dependency injection, events, resources, i18n, validation, data binding, type conversion, SpEL, AOP.
+- [Testing](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/testing.html): mock objects, TestContext framework, Spring MVC Test, `WebTestClient`.
+- [Data Access](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/data-access.html): transactions, DAO support, JDBC, ORM, Marshalling XML.
+- [Spring MVC](https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html) and [Spring WebFlux](https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html) web frameworks.
+- [Integration](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/integration.html): remoting, JMS, JCA, JMX, email, tasks, scheduling, cache.
+- [Languages](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/languages.html): Kotlin, Groovy, dynamic languages.
+
+依赖注入：启动Spring过程：1、首先通过```HttpServlet``` init 方法来加载整个Spring容器，首先要定位资源信息，加载资源信息，properties文件等等，这个有个顺序可以在官方文档里面看到，
+
+事件驱动： 在Springboot中的application 其中有一部分好像就是事件驱动
+
+事务管理：
+
+SpringMVC 是基于Servlet的，Spring WebFlux 是根据Netty驱动的，异步非阻塞队列
+
+
+
+
+
+
+
+
+
+# 四、微服务
+
+## 4.1 面向服务的架构 SOA 
+
+## 4.2 Cloud Native
 
 百度百科这样解释
 
@@ -160,8 +215,6 @@ base理论是对CAP的一种妥协，无法做到强一致，就使用另一种�
 
 
 
-
-
 ​	在spring体系中，spring提供了一套 cloud navit 的解决方案，其中主要了解一下 MicroService 和DevOps。
 
 Cloud Native的基础设施有
@@ -176,11 +229,14 @@ Cloud Native的基础设施有
 
 
 
-## Euraka 
+## 4.3 Euraka 
+
+
 
 服务发现：
 
 - 常见的协议
+
   - ​	java ： jini
 
   - ​	Rest： hateoas
@@ -226,7 +282,7 @@ Cloud Native的基础设施有
 
 
 
-## Feign Hystrix
+## 4.4 Feign Hystrix
 
 JAVA  RMI  二进制协议
 
@@ -281,4 +337,93 @@ ServerListUpdater
 ```
 
 
+
+
+
+# 五、分布式
+
+## 分布式的CAP
+
+CAP是加州大学伯克利分销的Eric Brewer教授提出来的。指的是在分布式系统中，三个要素最多能实现两点，不可能三者兼顾
+
+
+
+(Consistency) 一致性
+
+​	在分布式系统中所有的数据备份在同一时刻是一致的。同步数据的延迟性极小
+
+(Available) 可用性 
+
+​	在分布式系统中某一单点节点宕机之后,每个响应依然可以完成
+
+(Partition tolerance) 分区容错性
+
+​	在集群中如果出现错误能够正常服务
+
+
+
+### BASE 理论
+
+Basically Avaliable (基本可用)
+
+Soft state  （软状态）
+
+Eventually consistent (最终一致性)
+
+base理论是对CAP的一种妥协，无法做到强一致，就使用另一种方法来达到最终的目的
+
+
+
+### XA协议
+
+1、2PC   to prepare commit  两阶段提交，就是XA协议的原理。牺牲一部分可用性来保证一致性。
+
+第一阶段提交就是预提交，等处理完成后接受返回，判断返回结果来决定下一个请求是commit还是abort。
+
+2、TCC   try catch cancel   执行的时候判断是否出现异常，如果失败，则调用cancel处理。
+
+3、异步补偿机制  ，写入数据的时候如果异常，需要写入一个消息，异步通过消息来对此次写入数据做补偿。
+
+
+
+[参考文章](https://www.cnblogs.com/savorboard/p/distributed-system-transaction-consistency.html)
+
+
+
+
+
+# 六、DB
+
+
+
+# 七、网络
+
+## 7.1 HTTP2.0
+    Hypertext 超文本协议
+    HPACK 
+
+
+
+## 7.2 Rest协议
+一方面是 requestMethod的运用，另一方面是response 更多的根据状态码来判断。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 布隆过滤器
 
