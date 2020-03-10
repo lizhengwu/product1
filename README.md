@@ -355,7 +355,9 @@ volatile Node<K,V> next;
 
 - 线程安全的HashMap 
 
-- 1.7 用segment 1.8 用CAS。并且在链表过长也会转红黑树
+- 1.7 用segment ，1.8 用CAS 分段锁。并且在链表过长也会转红黑树
+
+- 
 
   
 
@@ -365,12 +367,39 @@ volatile Node<K,V> next;
 
 **Features**
 
-- 插入有序的HashMap 
-- accessOrder决定维护部维护插入顺序
+- 插入有序的HashMap 底层考一个LinkedList来维护。
+- accessOrder 决定了是插入排序，还是读取排序，fail为插入排序，true为读取排序，每日插入或者读取，都会将当前元素放在链表的尾部
 
+可以依靠LinkedHashMap的特性来实现LRU算法， 
 
+```java
+public class LRUCache extends LinkedHashMap {
 
-基于LinkedHashMap 实现LRU缓存
+   /**
+    * 保存3个热点
+    */
+   private static int MAX_ENTRIES;
+
+   /**
+    * 初始化最大热点数量
+    * @param maxEntries
+    */
+   public LRUCache(int maxEntries) {
+      super();
+      MAX_ENTRIES = maxEntries;
+   }
+
+   /**
+    * 如果返回true，则删除头结点
+    * @param eldest
+    * @return
+    */
+   @Override
+   protected boolean removeEldestEntry(Map.Entry eldest) {
+      return size() > MAX_ENTRIES;
+   }
+}
+```
 
 
 
@@ -378,13 +407,52 @@ volatile Node<K,V> next;
 
 ### WeakHashMap
 
+基本特点就是Key如果没有被其他实际对象引用，则会被垃圾回收掉。
 
+tomcat中的ConcurrentCache 是通过WeakHashMap和ConcurrentHashMap实现的
 
+```java
+public final class ConcurrentCache<K,V> {
 
+    private final int size;
+	// 伊甸园
+    private final Map<K,V> eden;
+	// 持久代
+    private final Map<K,V> longterm;
 
-主要用来缓存实现
+    public ConcurrentCache(int size) {
+        this.size = size;
+        this.eden = new ConcurrentHashMap<>(size);
+        this.longterm = new WeakHashMap<>(size);
+    }
+	// 先从伊甸园里面找
+    public V get(K k) {
+        V v = this.eden.get(k);
+        // 找不到再从持久代里面找，
+        if (v == null) {
+            synchronized (longterm) {
+                v = this.longterm.get(k);
+            }
+            // 如果找到了，放入伊甸园中
+            if (v != null) {
+                this.eden.put(k, v);
+            }
+        }
+        return v;
+    }
 
-
+    public void put(K k, V v) {
+        // 如果热点区域的大小超过预制的大小，则放入WeakHashMap中，依靠JVM进行GC
+        if (this.eden.size() >= size) {
+            synchronized (longterm) {
+                this.longterm.putAll(this.eden);
+            }
+            this.eden.clear();
+        }
+        this.eden.put(k, v);
+    }
+}
+```
 
 
 
@@ -412,15 +480,63 @@ NEW、RUNNABLE 、BLOCK、WAIT、TIMEWAIT、TERMINATED
 
 
 
-### ThreadPoolExecutor
 
-线程池
+
+### 线程池
+
+ThreadPoolExecutor
+
+- newCachedThreadPool  return 	ExecutorService
+- newFixedThreadPool  return 	ExecutorService
+- newWorkStealingPool  return 	ExecutorService
+- newSingleThreadExecutor   return 	ExecutorService
+- newSingleThreadScheduledExecutor    return ScheduledExecutorService
+
+
+
+
+
+### 线程安全
+
+volatile、synchronize、Lock
+
+synchronize 和Lock
+
+- synchronize 是JVM级别的锁，Lock是JDK级别的锁
+
+  
+
+ReadWrite 读写锁 与java8的StampedLock比较
+
+ReetrantLock 可重入锁 可以显示的 加锁和释放锁，建议用finally来保证锁的释放
+
+死锁。 要写出来个死锁
+
+
+
+### 线程通信
+
+notify 
+
+wait
+
+notifyAll
+
+Condition来唤醒线程
+
+阻塞队列来控制BlockingQueue
+
+### 线程相关的类
+
+ThreadLocal
 
 
 
 ### CAS 无锁同步机制
 
 
+
+## 2.6 JAVA 虚拟机
 
 
 
@@ -476,6 +592,8 @@ SpringMVC 是基于Servlet的，Spring WebFlux 是根据Netty驱动的，异步�
 # 四、微服务
 
 ## 4.1 面向服务的架构 SOA 
+
+
 
 ## 4.2 Cloud Native
 
