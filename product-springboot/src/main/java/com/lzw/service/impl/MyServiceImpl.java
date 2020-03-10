@@ -2,7 +2,6 @@ package com.lzw.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import com.lzw.aspect.TimeAspect;
 import com.lzw.service.MyService;
 
 @Service

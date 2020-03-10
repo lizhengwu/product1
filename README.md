@@ -58,6 +58,12 @@ Docker
 
 
 
+Solr  搜索服务 
+
+
+
+
+
 
 
 
@@ -406,6 +412,16 @@ NEW、RUNNABLE 、BLOCK、WAIT、TIMEWAIT、TERMINATED
 
 
 
+### ThreadPoolExecutor
+
+线程池
+
+
+
+### CAS 无锁同步机制
+
+
+
 
 
 ## 2.XX Java8新特性
@@ -606,6 +622,33 @@ ServerListUpdater
 
 
 
+
+## 4.5 DUBBO
+
+自我经验应用场景
+
+- 通过SPI协议扩展
+- 隐式传参，在Consumer的FIlter中设置，在Provider的Filter中获取
+
+```java
+RpcContext.getContext().getAttachment();
+```
+
+- 集群容错：有的可以retries，有的则需要boardcast
+- 负载均衡：根据业务场景，如果涉及到缓存，应该用最少活跃，或者其他的
+- 多版本：根据不同的版本，调用不同的接口处理。
+- 服务分组：批量调用和普通调用是不一样的
+- 异步调用：
+- 控制连接数：
+- 路由规则：
+
+Dubbo配置分为三大类：
+
+1. 服务发现：服务的注册与发现，目的是发布服务，并且使调用方可以能够尽快的感知服务的存在
+2. 服务治理：负载均衡，集群容错，相关的配置。
+3. 性能调优：之所以所谓调优，意思就是不同的配置会有不同的应用场景，根据业务场景来达到最优解。
+
+attention：只有group，interface，version 是服务的匹配条件三者决定是不是同一个服务，其它配置项均为调优和治理参数。
 
 # 五、分布式
 
