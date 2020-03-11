@@ -11,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 〈LRU 缓存〉
+ * 〈 利用 LinkedHashMap 实现LRU 缓存〉
  *
  * @author lzw
  * @create 2020/3/10
