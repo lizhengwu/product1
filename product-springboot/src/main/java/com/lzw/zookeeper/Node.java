@@ -9,6 +9,9 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
+/**
+ * Master选举
+ */
 public class Node {
 
 	// 自动以每个节点的状态
