@@ -1,3 +1,7 @@
+---
+typora-root-url: picture
+---
+
 # 一、JAVA技术栈
 
 
@@ -480,6 +484,17 @@ public final class ConcurrentCache<K,V> {
 
 NEW、RUNNABLE 、BLOCK、WAIT、TIMEWAIT、TERMINATED
 
+状态机如下
+
+![2020-03-11_214440](/2020-03-11_214440.jpg)
+
+- NEW	创建一个县城
+- RUNNABLE  可能正在运行，也可能正在等待CPU时间片 （包含了操作系统线程状态中的RUNNING和READY）
+- BLOCKED  获得了一个排它锁，等待其他线程释放
+- WAITTING  无限期等待，只能依靠notify唤醒， join也会等待，等待其他线程执行完毕，park、unpark
+- TIMEWATTING  join，parkNanos 、parkUntil  wait  
+- TERMINATED 死亡
+
 
 
 
@@ -488,13 +503,15 @@ NEW、RUNNABLE 、BLOCK、WAIT、TIMEWAIT、TERMINATED
 
 ThreadPoolExecutor
 
-- newCachedThreadPool  return 	ExecutorService
-- newFixedThreadPool  return 	ExecutorService
-- newWorkStealingPool  return 	ExecutorService
-- newSingleThreadExecutor   return 	ExecutorService
-- newSingleThreadScheduledExecutor    return ScheduledExecutorService
+| 线程池                  | 特性                                         |
+| ----------------------- | -------------------------------------------- |
+| newCachedThreadPool     | 缓存线程池，存活60L，可以创建出Max个线程     |
+| newFixedThreadPool      | 固定线程池，固定创建X个线程池，存活0         |
+| newSingleThreadExecutor | 单一线程池                                   |
+| newWorkStealingPool     | 并行线程池，1.7新增，根据CPU核心数量并行计算 |
+| newScheduledThreadPool  | 定时任务线程池，多用于monitor，              |
 
-
+线程池的缓冲队列是最大的，有可能被撑爆 造成OOM
 
 
 
