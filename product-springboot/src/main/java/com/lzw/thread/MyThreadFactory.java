@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 〈〉
+ * 〈自定义线程工厂，参照dubbo〉
  *
  * @author lzw
  * @create 2020/3/11
