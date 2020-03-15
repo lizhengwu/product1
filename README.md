@@ -1,5 +1,5 @@
 ---
-typora-root-url: picture
+
 ---
 
 # 一、JAVA技术栈
@@ -486,7 +486,7 @@ NEW、RUNNABLE 、BLOCK、WAIT、TIMEWAIT、TERMINATED
 
 状态机如下
 
-![2020-03-11_214440](/2020-03-11_214440.jpg)
+![2020-03-11_214440](./picture/2020-03-11_214440.jpg)
 
 - NEW	创建一个县城
 - RUNNABLE  可能正在运行，也可能正在等待CPU时间片 （包含了操作系统线程状态中的RUNNING和READY）
@@ -494,6 +494,8 @@ NEW、RUNNABLE 、BLOCK、WAIT、TIMEWAIT、TERMINATED
 - WAITTING  无限期等待，只能依靠notify唤醒， join也会等待，等待其他线程执行完毕，park、unpark
 - TIMEWATTING  join，parkNanos 、parkUntil  wait  
 - TERMINATED 死亡
+
+
 
 
 
@@ -511,28 +513,41 @@ ThreadPoolExecutor
 | newWorkStealingPool     | 并行线程池，1.7新增，根据CPU核心数量并行计算 |
 | newScheduledThreadPool  | 定时任务线程池，多用于monitor，              |
 
-线程池的缓冲队列是最大的，有可能被撑爆 造成OOM
+线程池的缓冲队列是最大的，有可能被撑爆造成OOM
 
 
 
 ### 线程安全
 
-volatile、synchronize、Lock
+#### volatile、synchronize、Lock
 
-**synchronize 和Lock**
+| 种类        | 特征                                                         |
+| ----------- | ------------------------------------------------------------ |
+| volatile    | 只能保证有序性和可见性和单次指令的原子性，防止指令重排序     |
+| synchronize | JVM级别的锁 非公平 1.8之后运用的是自旋锁，                   |
+| Lock        | JDK级别的锁  默认非公平，也可以设置成公平锁， 内部靠state来判断状态 |
 
-- synchronize 是JVM级别的锁，Lock是JDK级别的锁
 
 
-**锁的分类**
+volatile 是基于内存屏障的，memory barrier。
 
-- 可重入锁
+synchronized  ，有两个作用域，一个是同步方法， 一个是同步代码块  this只在一个对象的作作用域找那个起作用，class在整个容器中的class都起作用
 
-- 排他锁
+对于同步方法，JVM采用`ACC_SYNCHRONIZED`标记符来实现同步。 
 
-- 读写锁
+对于同步代码块。JVM采用`monitorenter`、`monitorexit`两个指令来实现同步。
 
-  
+
+
+#### 锁
+
+乐观锁：不排斥其他线程。
+
+悲观锁：排斥其他线程，只能串行。
+
+- StampedLock  jdk1.8 新出的乐观锁，因为读写锁，在读的时候，写的锁一直拿不到，这样还是不行
+- ReentrantLock 可重入锁，也可以说是非公平锁。
+- ReentrantReadWriteLock 可重入读写锁。在写的时候加锁，读的时候不加锁。
 
 ReadWrite 读写锁 与java8的StampedLock比较
 
@@ -542,25 +557,105 @@ ReetrantLock 可重入锁 可以显示的 加锁和释放锁，建议用finally�
 
 
 
+#### AQS
+
+AbstractQueuedSynchronizer，Lock的底层就是通过AQS来实现的。
+
+是根据双向链表加一个state实现的. 
+
+
+
+当锁被占用的时候，加入队列中
+
+```java
+public final void acquire(int arg) {
+    if (!tryAcquire(arg) &&
+        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+        selfInterrupt();
+}
+```
+
+tryAcquire  尝试再拿一次锁
+
+addWaiter  将锁加入链表
+
+acquireQueued  自旋等待
+
+
+
+![image-20200313190203999](picture/image-20200313190203999.png)
+
+
+
+
+
+#### CAS 无锁同步机制
+
+ Compare And Swap 乐观锁	，依靠操作系统的native方法
+
+
+
+
+
 ### 线程通信
 
-notify 
+**interrupt**
 
-wait
+Interrupt 实际上是一个信号，只是设置了一个中断状态而已，如果线程在sleep wait等状态，会抛出异常，如果在I/O Block状态下 抛出一个ClosedByInterruptException异常
 
-notifyAll
+```
+interrupt的核心就是设置一个状态，如果不在Runnable中就会抛出一个异常，如果在的话，就会标记为成已经失效的状态
+```
+
+
+
+**wait，notify ，notifyAll**
+
+wati的时候会释放锁，等待其他线程调用 notify,notifyAll 来唤醒。
+
+wait会释放锁，但是sleep不会。
+
+
 
 Condition来唤醒线程
 
 阻塞队列来控制BlockingQueue
 
+LockSupport 可以手工听，park和unpark
+
+
+
 ### 线程相关的类
 
-ThreadLocal
+ThreadLocal 线程内的一个map
+
+countDownLaunch，等所有countdown之后继续执行，
+
+CyclicBarrier，等待所有线程就绪后一起执行
 
 
 
-### CAS 无锁同步机制
+### MESI 缓存一致性
+
+M：Modify 
+
+E：Exclusive  
+
+S：Share
+
+I：Invalid
+
+
+
+​	在多核处理器中，缓存一般分为两大类，一类是所有CPU的共享缓存，另一类是每个CPU独占的缓存。正式因为有这两类，所以引发出了MESI缓存一致性的处理方案。
+
+​	为了保证各个核心CPU的缓存是一致的，实现了缓存一致性协议（MESI），每个处理器通过嗅探在总线上传播的数据来检查自己缓存的值是不是过期了，当处理器发现自己缓存行对应的内存地址被修改，就会将当前处理器的缓存行设置成无效状态，当处理器对这个数据进行修改操作的时候，会重新从系统内存中把数据读到处理器缓存里。
+
+
+
+
+
+
 
 
 
@@ -588,7 +683,7 @@ ThreadLocal
 
 
 
-# 三、JAVA框架
+# 三、JAVA 框架
 
 ## 3.1 SpringFramework
 
@@ -613,7 +708,13 @@ SpringMVC 是基于Servlet的，Spring WebFlux 是根据Netty驱动的，异步�
 
 
 
+## QUESTION
 
+*Spring支持哪几种bean的作用域？*
+
+*Spring AOP支持哪几种类型的通知？*
+
+application对象的作用？*
 
 
 
