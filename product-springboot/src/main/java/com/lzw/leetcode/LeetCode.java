@@ -10,9 +10,48 @@ public class LeetCode {
 
 	public static void main(String[] args) {
 
-		int process = process2(9);
-		System.out.println(process);
+		// process4(12121);
+		// System.out.println(process);
 
+		System.out.println(321 % 10 + "     " + 123321 / 10);
+		System.out.println(123321 % 100 + "     " + 123321/ 100);
+		System.out.println(123321 % 1000 + "    " + 123321 / 1000);
+		System.out.println(123321 % 10000 + "    " + 123321 / 10000);
+		System.out.println(123321 % 100000 + "    " + 123321 / 100000);
+
+	}
+
+	private static boolean process4(int n) {
+
+		List<Integer> objects = new ArrayList<>();
+		int middle;
+
+		int i = 10;
+		int length = 1;
+		for (; ; ) {
+
+			int chu = n / i;
+			int mo = n % i;
+
+			boolean b = chu / i < 10 && mo / i < 10;
+			if(b){
+
+
+			}
+
+
+			boolean b1 = chu / i > 10 && mo / i < 10;
+			if(b1){
+				System.out.println("达到中间");
+			}
+
+			i = i * 10;
+			length++;
+		break;
+		}
+
+
+		return false;
 	}
 
 	/**
@@ -78,8 +117,9 @@ public class LeetCode {
 
 	/**
 	 * 求 1+2+...+n ，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
-	 *
+	 * <p>
 	 * 短路原则，如果前面的判断做过了，后面的判断就不会做了，所以利用 && 来
+	 *
 	 * @param target
 	 * @return
 	 */
@@ -92,16 +132,22 @@ public class LeetCode {
 	}
 
 	/**
-	 *
 	 * 字符串的左旋转操作是把字符串前面的若干个字符转移到字符串的尾部。请定义一个函数实现字符串左旋转操作的功能。比如，输入字符串"abcdefg"和数字2，该函数将返回左旋转两位得到的结果"cdefgab"。
-	 *
+	 * <p>
 	 * 来源：力扣（LeetCode）
 	 * 链接：https://leetcode-cn.com/problems/zuo-xuan-zhuan-zi-fu-chuan-lcof
 	 * 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
-	 * @param target
+	 *
+	 * @param
 	 * @return
 	 */
-	private static String  process3(String str,int n) {
-		return str.substring(n)+str.substring(0, n);
+	private static String process3(String str, int n) {
+		return str.substring(n) + str.substring(0, n);
 	}
+
+	/**
+	 * @param n
+	 * @return
+	 */
+
 }

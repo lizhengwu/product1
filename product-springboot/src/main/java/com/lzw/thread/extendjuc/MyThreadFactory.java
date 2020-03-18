@@ -5,7 +5,7 @@
  * Description:
  * History:
  */
-package com.lzw.thread;
+package com.lzw.thread.extendjuc;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
