@@ -1,4 +1,4 @@
-package com.lzw.aspect;
+package com.lzw.spring.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

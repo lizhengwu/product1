@@ -10,8 +10,6 @@ package com.lzw.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.lzw.aspect.TimeAspect;
-
 /**
  * 〈@Enable design module〉
  *

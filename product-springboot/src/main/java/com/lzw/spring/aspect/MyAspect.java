@@ -1,4 +1,4 @@
-package com.lzw.aspect;
+package com.lzw.spring.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -21,7 +21,12 @@ public class MyAspect {
 	public void processTime() {
 	}
 
-	@Around("processTime()")
+	@Around("processTime()") // 环绕
+	// @Before("processTime()") // 方法处理之前
+	// @After("processTime()") // 方法处理过后
+	// @AfterReturning("processTime()") // 返回值为非void的时候
+	// @AfterThrowing("processTime()") // 异常
+
 	public Object processTimeAspect(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		long startTime = System.currentTimeMillis();
 		Object proceed = proceedingJoinPoint.proceed();

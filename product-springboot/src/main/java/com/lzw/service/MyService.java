@@ -1,6 +1,6 @@
 package com.lzw.service;
 
-import com.lzw.aspect.TimeAspect;
+import com.lzw.spring.aspect.TimeAspect;
 
 public interface MyService {
 

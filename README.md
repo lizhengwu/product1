@@ -605,8 +605,6 @@ public final class ConcurrentCache<K,V> {
 
 
 
-## 2.4 代理
-
 
 
 ## 2.5 内存模型
@@ -899,6 +897,31 @@ I：Invalid
 
 # 三、JAVA 框架
 
+**面试时候的思路**
+
+​	如果被问到Spring项管的信息，首先从Spring整体生态来说。
+
+Spring 官网上的project 有 spring Boot、Spring Framework 、Spring Data 、Spring Cloud、Spring Batch、Spring Security
+
+我们经常用的就是SpringFramework、Spring Boot、 Spring Cloud。
+
+Spring Framework：
+
+​	SpringFramework是Spring整个生态体积中的基石，每一个Spring的project都会依赖SpringFramework里面的内容。SpringFramework 主要特点 代码相关的有依赖注入，控制反转，事件驱动，面向切面，数据绑定，数据转换等等。上面的在面试中肯定记不太清，或者我认为单纯这样硬背，我可能背不下来，所以换个思路，从Spring的jar包结构来说明他都干了什么
+
+| package                            | describe                                             |
+| ---------------------------------- | ---------------------------------------------------- |
+| org.springframework:spring-core    | 基本的一些代码，cglib，annotation，asm，util         |
+| org.springframework:spring-aop     | aseptj 面向切面                                      |
+| org.springframework:spring-beans   | Bean工厂的管理，包括了解析配置，初始化，自动装配等   |
+| org.springframework:spring-context | Application 上下文，时间，等容器，与beans共同实现IOC |
+| org.springframework:spring-jdbc    | 数据源管理                                           |
+| org.springframework:spring-webmvc  | 对servlet的一个封装。                                |
+| org.springframework:spring-orm     | 数据持久化层                                         |
+|                                    |                                                      |
+
+
+
 ## 3.1 SpringFramework
 
 ### Features
@@ -910,15 +933,89 @@ I：Invalid
 - [Integration](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/integration.html): remoting, JMS, JCA, JMX, email, tasks, scheduling, cache.
 - [Languages](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/languages.html): Kotlin, Groovy, dynamic languages.
 
-依赖注入：启动Spring过程：1、首先通过```HttpServlet``` init 方法来加载整个Spring容器，首先要定位资源信息，加载资源信息，properties文件等等，这个有个顺序可以在官方文档里面看到，
-
-事件驱动： 在Springboot中的application 其中有一部分好像就是事件驱动
-
-事务管理：
-
-SpringMVC 是基于Servlet的，Spring WebFlux 是根据Netty驱动的，异步非阻塞队列
 
 
+### **IOC container**
+
+通过ApplicationContext 是一个顶级接口。是所有beanFactory的顶级接口。他新增了几个特性，更容易的与APO集成、resource的处理（针对于国际化的一些配置），事件发布、特定于很多上下文，比如说webApplicationContext、ReactiveApplicationContext
+
+IOC他是整个Spring中的机主性的存在，主要的特点就是将JavaBean 初始化，装配。每个对象在在容器中通过反射来调用。
+
+**Container Overview**
+
+bean实例的元数据装配主要是通过Xml，Code，Java Annotation。
+
+>- [Annotation-based configuration](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-annotation-config): Spring 2.5 introduced support for annotation-based configuration metadata.
+>- [Java-based configuration](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-java): Starting with Spring 3.0, many features provided by the Spring JavaConfig project became part of the core Spring Framework. Thus, you can define beans external to your application classes by using Java rather than XML files. To use these new features, see the [`@Configuration`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html), [`@Bean`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Bean.html), [`@Import`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html), and [`@DependsOn`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/DependsOn.html) annotations.
+
+
+
+#### **Bean Overview**
+
+the Bean definition
+
+| Properties               | **Explained**                                                |
+| ------------------------ | ------------------------------------------------------------ |
+| class                    | 告诉Spring 要加载哪个class                                   |
+| name                     | Spring实例化出来的name， 与ID一样                            |
+| Scope                    | spring管理的bean的可见性，singleton,prototype,request,session,application,websocket |
+| Constructor arguments    | 1、constructor-base注入。2、setter-base注入（解决循环依赖）  |
+| Properties               | 通过Xml配置 交给Spring管理的bean                             |
+| Autowiring mode          | 自动装配的规则，默认为NO。通常使用NO                         |
+| Lazy initialization mode | 延迟加载                                                     |
+| Initialization method    | springbean 配置的init-method                                 |
+| Destruction method       | springbean 配置的destroyMethod                               |
+
+#### Dependency
+
+依赖注入：
+
+1. constructor-base注入
+2. setter-base注入
+
+面试经常问到的循环依赖：
+
+```
+							Circular dependencies
+If you use predominantly constructor injection, it is possible to create an unresolvable circular dependency scenario.
+
+For example: Class A requires an instance of class B through constructor injection, and class B requires an instance of class A through constructor injection. If you configure beans for classes A and B to be injected into each other, the Spring IoC container detects this circular reference at runtime, and throws a BeanCurrentlyInCreationException.
+
+One possible solution is to edit the source code of some classes to be configured by setters rather than constructors. Alternatively, avoid constructor injection and use setter injection only. In other words, although it is not recommended, you can configure circular dependencies with setter injection.
+
+Unlike the typical case (with no circular dependencies), a circular dependency between bean A and bean B forces one of the beans to be injected into the other prior to being fully initialized itself (a classic chicken-and-egg scenario).
+```
+
+@Autowrite 注入类。
+
+@Lookup 实现方法注入
+
+
+
+#### Bean Scope
+
+
+
+| Scope       | **Description** |
+| ----------- | --------------- |
+| singleton   | 单例            |
+| prototype   | 多例            |
+| request     | 请求有效        |
+| session     | session有效     |
+| application | 应用有效        |
+| websocket   |                 |
+
+
+
+singleton beans with  prototype bean 如果单例中注入的是多例，那么每一个bean里面的多例都是不同的实例。
+
+如果多例注入单例，那么所有多例中的实例都是一个实例
+
+
+
+### 代理
+
+Spring 中 主要有两种形式cglib和jdk
 
 
 
@@ -1103,6 +1200,8 @@ RpcContext.getContext().getAttachment();
 - 控制连接数：
 - 路由规则：
 
+
+
 Dubbo配置分为三大类：
 
 1. 服务发现：服务的注册与发现，目的是发布服务，并且使调用方可以能够尽快的感知服务的存在
@@ -1111,9 +1210,11 @@ Dubbo配置分为三大类：
 
 attention：只有group，interface，version 是服务的匹配条件三者决定是不是同一个服务，其它配置项均为调优和治理参数。
 
+
+
 # 五、分布式
 
-## 分布式的CAP
+## 5.1 分布式的CAP
 
 **概念**
 
