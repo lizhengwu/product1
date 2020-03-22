@@ -580,13 +580,15 @@ public final class ConcurrentCache<K,V> {
 
 
 
+参考资料：https://blog.csdn.net/xpsallwell/article/details/80421882
+
 序列化工具：
 
 | 工具       | 相关类                                | 特性           |
 | ---------- | ------------------------------------- | -------------- |
 | JDK原生    | ObjectOutputStream，ObjectInputStream | 转换成二进制   |
 | fastJson   | JSON，JSONObject                      | 转换成字符串   |
-| kryo       |                                       | 格式小，速度快 |
+| kryo       | kryo，input，output                   | 格式小，速度快 |
 | protostuff |                                       |                |
 
 
