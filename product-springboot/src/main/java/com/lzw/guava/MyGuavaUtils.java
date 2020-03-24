@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -111,8 +110,8 @@ public class MyGuavaUtils {
 	/**
 	 * 布隆过滤器
 	 */
-	public void bloom(){
-		BloomFilter bloomFilter = BloomFilter.create(Funnels.integerFunnel(),100000);
+	public void bloom() {
+		BloomFilter bloomFilter = BloomFilter.create(Funnels.integerFunnel(), 100000);
 	}
 
 	/**
@@ -164,11 +163,12 @@ public class MyGuavaUtils {
 
 	/**
 	 * 校验
+	 *
 	 * @param
 	 */
-	public void validate(String a ){
-		Preconditions.checkNotNull(a,"不能为空");
-		Preconditions.checkArgument("null".equals(a),"");
+	public void validate(String a) {
+		Preconditions.checkNotNull(a, "不能为空");
+		Preconditions.checkArgument("null".equals(a), "");
 	}
 
 }
